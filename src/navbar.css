@@ -2,8 +2,8 @@
 
 /* Styling for the Navbar */
 .navbar {
-  background-color: #3f51b5; /* You can change to your preferred color */
-  background-image: url('./Assets/2nd.jpg'); /* Specify the path to your image */
+  background-color: #3dc9ce; /* You can change to your preferred color */
+ 
   background-size: cover; /* Ensure the image covers the entire navbar */
   background-repeat: no-repeat; /* Prevent the image from repeating */
   background-position: center; /* Center the image */
