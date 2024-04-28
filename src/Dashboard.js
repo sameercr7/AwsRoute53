@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Chart from "chart.js/auto"; // Import Chart.js
+import AwsChart from "./AwsChart";
 import {
   Button,
   Table,
@@ -102,48 +103,8 @@ const Dashboard = () => {
     }
   }, [isAuthenticated, getAccessTokenSilently]);
 
-  useEffect(() => {
-    if (chartData) {
-      // Render chart when chartData is available
-      const existingChart = Chart.getChart("myChart");
-      if (existingChart) {
-        existingChart.destroy();
-      }
-      renderChart();
-    }
-  }, [chartData]);
-  const renderChart = () => {
-    const ctx = document.getElementById("myChart");
-    console.log(chartData);
-    const chartLabels = chartData.map((zone) => {
-      const firstRecord = zone.records.length > 0 ? zone.records[0] : "";
-      return firstRecord;
-    });
-    const chartDataValues = chartData.map((zone) => zone.records.length);
-
-    new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: chartLabels,
-        datasets: [
-          {
-            label: "Number of Records",
-            data: chartDataValues,
-            backgroundColor: "rgba(54, 162, 235, 0.2)",
-            borderColor: "rgba(54, 162, 235, 1)",
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-          },
-        },
-      },
-    });
-  };
+ 
+ 
   const handleOpenModal = (record = null) => {
     setIsModalOpen(true);
     setCurrentRecord(record || { domain: "", type: "", value: "" });
@@ -340,7 +301,7 @@ const Dashboard = () => {
           </Table>
         </TableContainer>
         <h2>Chart Data Domain Vs Records</h2>
-        <canvas id="myChart" width="400" height="400"></canvas>
+        <AwsChart chartData={chartData} />
         <Modal open={isModalOpen} onClose={handleCloseModal}>
           <Box className="modal-content">
             <Typography variant="h6" component="h2">
