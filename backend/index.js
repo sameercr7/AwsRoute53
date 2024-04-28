@@ -29,15 +29,13 @@ const hostedZoneId = process.env.ROUTE53_HOSTED_ZONE_ID; // Your Hosted Zone ID 
 
 // MongoDB connection
 mongoose
-  .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => {
     console.error('MongoDB connection error:', err);
     process.exit(1);
   });
+
 
 app.use(cors());
 app.use(bodyParser.json()); // Parse JSON request bodies
