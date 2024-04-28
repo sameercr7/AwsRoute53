@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Chart from "chart.js/auto"; // Import Chart.js
 import AwsChart from "./AwsChart";
 import {
   Button,
