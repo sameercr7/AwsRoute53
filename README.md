@@ -52,7 +52,7 @@ API Endpoints (Example URLs):
 •	PUT Update existing record: https://awsroute53.onrender.com/api/dns-records/{currentRecord._id}
 •	POST Create new record: https://awsroute53.onrender.com/api/dns-records
 •	DELETE Deleting DNS Record: https://awsroute53.onrender.com/api/dns-records/{id}
-•	POST Bulk Update: https://awsroute53.onrender.com1/api/upload
+•	POST Bulk Update: https://awsroute53.onrender.com/api/upload
 
 Bugs:
 1-While selecting Type of the Dns Server Record if wrong value entered I did not provided  any message to select the correct record for the selected DNS record.
