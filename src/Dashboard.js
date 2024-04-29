@@ -61,7 +61,7 @@ const Dashboard = () => {
 
         // Fetch DNS records
         const dnsResponse = await axios.get(
-          "https://awsroute53.onrender.com/api/dns-records",
+          "http://localhost:3001/api/dns-records",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -71,7 +71,7 @@ const Dashboard = () => {
         setDnsRecords(dnsResponse.data);
 
         const hostedZoneChartResponse = await axios.get(
-          "https://awsroute53.onrender.com/api/hosted-zones-with-records",
+          "http://localhost:3001/api/hosted-zones-with-records",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -90,7 +90,7 @@ const Dashboard = () => {
 
         // Fetch hosted zones
         const hostedZonesResponse = await axios.get(
-          "https://awsroute53.onrender.com/api/hosted-domains",
+          "http://localhost:3001/api/hosted-domains",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -102,8 +102,6 @@ const Dashboard = () => {
     }
   }, [isAuthenticated, getAccessTokenSilently]);
 
- 
- 
   const handleOpenModal = (record = null) => {
     setIsModalOpen(true);
     setCurrentRecord(record || { domain: "", type: "", value: "" });
@@ -132,7 +130,7 @@ const Dashboard = () => {
     if (currentRecord._id) {
       // Update existing record
       const response = await axios.put(
-        `https://awsroute53.onrender.com/api/dns-records/${currentRecord._id}`,
+        `http://localhost:3001/api/dns-records/${currentRecord._id}`,
         currentRecord,
         {
           headers: {
@@ -148,7 +146,7 @@ const Dashboard = () => {
     } else {
       // Create new record
       const response = await axios.post(
-        "https://awsroute53.onrender.com/api/dns-records",
+        "http://localhost:3001/api/dns-records",
         currentRecord,
         {
           headers: {
@@ -161,15 +159,18 @@ const Dashboard = () => {
     handleCloseModal();
     Swal.fire("Record Saved", "The record is saved successfully.", "success");
   };
-// For Deleting Dns Record
+  // For Deleting Dns Record
   const handleDeleteRecord = async (id) => {
     console.log("this id is to be deleted", id);
     const accessToken = await getAccessTokenSilently();
-    await axios.delete(`https://awsroute53.onrender.com/api/dns-records/${id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    await axios.delete(
+      `http://localhost:3001/api/dns-records/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
     setDnsRecords((prev) => prev.filter((record) => record._id !== id));
     Swal.fire(
       "Record Deleted",
@@ -194,7 +195,7 @@ const Dashboard = () => {
 
     try {
       const accessToken = await getAccessTokenSilently();
-      await axios.post("https://awsroute53.onrender.com/api/upload", formData, {
+      await axios.post("http://localhost:3001/api/upload", formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data",
@@ -214,7 +215,6 @@ const Dashboard = () => {
         <Typography variant="h4" component="h1" className="title">
           DNS Records Dashboard
         </Typography>
-       
 
         <Select
           value={selectedZone} // Set value to the selected zone
@@ -244,7 +244,7 @@ const Dashboard = () => {
           color="primary"
           onClick={() => handleOpenModal()}
           className="add-button animated infinite pulse"
-          style={{ margin: '20px' }}
+          style={{ margin: "20px" }}
         >
           Add New DNS Record
         </Button>
