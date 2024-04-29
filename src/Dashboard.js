@@ -48,6 +48,8 @@ const Dashboard = () => {
   const [chartReponseData, setChartResponseData] = useState([]);
   const [selectedZone, setSelectedZone] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [isCreatingHostedZone, setIsCreatingHostedZone] = useState(false); 
+  const [newHostedZone, setNewHostedZone] = useState(""); 
   const [currentRecord, setCurrentRecord] = useState({
     domain: "",
     type: "",
@@ -209,12 +211,80 @@ const Dashboard = () => {
       Swal.fire("Upload Failed", error.response.data.message, "error");
     }
   };
+  // Function to handle opening/closing the hosted zone creation field
+  const toggleHostedZoneCreation = () => {
+    setIsCreatingHostedZone(!isCreatingHostedZone);
+  };
+
+  // Function to handle input change for the domain name of the new hosted zone
+  const handleNewHostedZoneChange = (e) => {
+    setNewHostedZone(e.target.value);
+  };
+// Function to handle saving the new hosted zone
+const handleSaveHostedZone = async () => {
+  try {
+    // Make API call to create the hosted zone
+    const response = await axios.post("http://localhost:3001/api/create-hosted-zone", {
+      domainName: newHostedZone,
+    });
+
+    // Display success message using SweetAlert
+    Swal.fire({
+      icon: "success",
+      title: "Hosted Zone Created",
+      text: `Hosted zone for ${response.data.hostedZone.Name} has been created successfully.`,
+    });
+
+    // Clear the input field and close the hosted zone creation field
+    setNewHostedZone("");
+    setIsCreatingHostedZone(false);
+  } catch (error) {
+    // Display error message using SweetAlert
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Failed to create hosted zone. Please try again later.",
+    });
+  }
+};
+
   return (
     <div className="dashboard">
       <Container>
         <Typography variant="h4" component="h1" className="title">
           DNS Records Dashboard
         </Typography>
+
+        <Button
+        variant="contained"
+        color="primary"
+        onClick={toggleHostedZoneCreation}
+        className="add-button"
+        style={{ backgroundColor: "green" }} // Set button color to green
+      >
+        Create Hosted Zone
+      </Button>
+
+      {/* Hosted zone creation field */}
+      {isCreatingHostedZone && (
+        <div className="create-hosted-zone-field">
+          <TextField
+            label="Domain Name"
+            value={newHostedZone}
+            onChange={handleNewHostedZoneChange}
+            fullWidth
+            variant="outlined"
+            margin="normal"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSaveHostedZone}
+          >
+            Save Hosted Zone
+          </Button>
+        </div>
+      )}
 
         <Select
           value={selectedZone} // Set value to the selected zone

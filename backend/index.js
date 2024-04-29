@@ -93,6 +93,16 @@ async function deleteRoute53Record(domain, type, value) {
   return await route53.changeResourceRecordSets(params).promise(); // Deletes the DNS record in Route 53
 }
 
+// Function to create a hosted zone in AWS Route 53
+async function createHostedZone(domainName) {
+  const params = {
+    CallerReference: `create-hosted-zone-${Date.now()}`, // A unique string to identify the request
+    Name: domainName,
+  };
+
+  return await route53.createHostedZone(params).promise(); // Creates the hosted zone in Route 53
+}
+
 // Creat a new DNS record form excel/csv
 app.post('/api/upload', upload.single('file'), async (req, res) => {
   const file = req.file;
@@ -311,7 +321,20 @@ app.get('/api/hosted-zones-with-records', async (req, res) => {
   }
 });
 
+// API endpoint to create a new hosted zone in AWS Route 53
+app.post('/api/create-hosted-zone', async (req, res) => {
+  try {
+    const { domainName } = req.body;
 
+    // Create the hosted zone in AWS Route 53
+    const hostedZone = await createHostedZone(domainName);
+
+    res.status(201).json({ message: 'Hosted zone created successfully', hostedZone });
+  } catch (err) {
+    console.error('Error creating hosted zone:', err);
+    res.status(400).json({ message: 'Bad Request', error: err.message });
+  }
+});
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
