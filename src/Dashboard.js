@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 
 import { useAuth0 } from "@auth0/auth0-react";
-import "./dashboard.css"; // Importing the CSS
+import "./dashboard.css"; 
 
 const recordTypes = [
   "SOA",
@@ -44,7 +44,7 @@ const Dashboard = () => {
   const [dnsRecords, setDnsRecords] = useState([]);
   const [hostedZones, setHostedZones] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [chartData, setChartData] = useState(null); // State for chart data
+  const [chartData, setChartData] = useState(null);
   const [chartReponseData, setChartResponseData] = useState([]);
   const [selectedZone, setSelectedZone] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");

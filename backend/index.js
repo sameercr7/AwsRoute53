@@ -10,7 +10,7 @@ const fs = require("fs");
 const path = require('path');
 const ExcelJS = require('exceljs');
 // Multer configuration for handling file uploads
-const upload = multer({ storage: multer.memoryStorage() }); // Store files in memory
+const upload = multer({ storage: multer.memoryStorage() }); 
 
 dotenv.config();
 
@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3001;
 
 // AWS Configuration
 AWS.config.update({
-  region: 'us-east-1', // Adjust to your region
+  region: 'us-east-1',
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
@@ -103,24 +103,23 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
 
   const tempFilePath = path.join(__dirname, 'uploads', file.originalname);
 
-  // Write the file buffer to a temporary file
+ 
   fs.writeFile(tempFilePath, file.buffer, async (err) => {
     if (err) {
       console.error('Error writing file:', err);
       return res.status(500).json({ message: 'Error saving file' });
     }
 
-    // Read the temporary Excel file and extract data
+
     const workbook = new ExcelJS.Workbook();
     try {
       await workbook.xlsx.readFile(tempFilePath);
 
-      const worksheet = workbook.getWorksheet(1); // Assuming data is in the first sheet
+      const worksheet = workbook.getWorksheet(1); 
       const records = [];
 
       worksheet.eachRow((row, rowNumber) => {
-        // Skip header row
-   
+      // sipping logic can be implemented
           const rowData = [];
           row.eachCell((cell) => {
             rowData.push(cell.value);
@@ -281,29 +280,31 @@ app.get('/api/hosted-domains', async (req, res) => {
 app.get('/api/hosted-zones-with-records', async (req, res) => {
   try {
     const params = {
+      // now this was important Step
       MaxItems: '100' // Adjust as needed to fetch more or fewer zones
     };
 
-    const data = await route53.listHostedZones(params).promise(); // Retrieve hosted zones from Route 53
+    const data = await route53.listHostedZones(params).promise(); 
+    // Retrieve hosted zones from Route 53
     const hostedZonesWithRecords = {};
 
     // Extract domain names from hosted zones
-    const hostedZones = data.HostedZones.map(zone => zone.Id.replace(/\/hostedzone\//, '')); // Extract hosted zone ID
+    const hostedZones = data.HostedZones.map(zone => zone.Id.replace(/\/hostedzone\//, '')); 
 
     // Fetch records for each hosted zone
     for (const zoneId of hostedZones) {
       const zoneParams = {
         HostedZoneId: zoneId,
-        MaxItems: '100', // Adjust as needed to fetch more or fewer records
+        MaxItems: '100', 
       };
 
-      const zoneData = await route53.listResourceRecordSets(zoneParams).promise(); // Retrieve record sets for the zone
-      const records = zoneData.ResourceRecordSets.map(record => record.Name.replace(/\.$/, '')); // Remove trailing dot
+      const zoneData = await route53.listResourceRecordSets(zoneParams).promise(); 
+      const records = zoneData.ResourceRecordSets.map(record => record.Name.replace(/\.$/, '')); 
 
       hostedZonesWithRecords[zoneId] = records;
     }
 
-    res.json(hostedZonesWithRecords); // Return hosted zones with their respective records as JSON
+    res.json(hostedZonesWithRecords); 
   } catch (err) {
     console.error('Error fetching hosted zones with records:', err);
     res.status(500).json({ message: 'Internal Server Error' });
@@ -311,8 +312,6 @@ app.get('/api/hosted-zones-with-records', async (req, res) => {
 });
 
 
-
-// Start the Express server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
