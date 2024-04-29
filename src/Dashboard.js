@@ -224,7 +224,7 @@ const Dashboard = () => {
 const handleSaveHostedZone = async () => {
   try {
     // Make API call to create the hosted zone
-    const response = await axios.post("http://localhost:3001/api/create-hosted-zone", {
+    const response = await axios.post("https://awsroute53.onrender.com/api/create-hosted-zone", {
       domainName: newHostedZone,
     });
 
