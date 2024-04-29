@@ -61,7 +61,7 @@ const Dashboard = () => {
 
         // Fetch DNS records
         const dnsResponse = await axios.get(
-          "http://localhost:3001/api/dns-records",
+          "https://awsroute53.onrender.com/api/dns-records",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -71,7 +71,7 @@ const Dashboard = () => {
         setDnsRecords(dnsResponse.data);
 
         const hostedZoneChartResponse = await axios.get(
-          "http://localhost:3001/api/hosted-zones-with-records",
+          "https://awsroute53.onrender.com/api/hosted-zones-with-records",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -90,7 +90,7 @@ const Dashboard = () => {
 
         // Fetch hosted zones
         const hostedZonesResponse = await axios.get(
-          "http://localhost:3001/api/hosted-domains",
+          "https://awsroute53.onrender.com/api/hosted-domains",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -130,7 +130,7 @@ const Dashboard = () => {
     if (currentRecord._id) {
       // Update existing record
       const response = await axios.put(
-        `http://localhost:3001/api/dns-records/${currentRecord._id}`,
+        `https://awsroute53.onrender.com/api/dns-records/${currentRecord._id}`,
         currentRecord,
         {
           headers: {
@@ -146,7 +146,7 @@ const Dashboard = () => {
     } else {
       // Create new record
       const response = await axios.post(
-        "http://localhost:3001/api/dns-records",
+        "https://awsroute53.onrender.com/api/dns-records",
         currentRecord,
         {
           headers: {
@@ -164,7 +164,7 @@ const Dashboard = () => {
     console.log("this id is to be deleted", id);
     const accessToken = await getAccessTokenSilently();
     await axios.delete(
-      `http://localhost:3001/api/dns-records/${id}`,
+      `https://awsroute53.onrender.com/api/dns-records/${id}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -195,7 +195,7 @@ const Dashboard = () => {
 
     try {
       const accessToken = await getAccessTokenSilently();
-      await axios.post("http://localhost:3001/api/upload", formData, {
+      await axios.post("https://awsroute53.onrender.com/api/upload", formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data",
