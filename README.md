@@ -9,6 +9,8 @@ Running the DNS Management Web Application Locally:
    npm install
    npm start
 
+Note:From this site  https://freedns.afraid.org/domain/ I created a sub Domain and entered in the AWSrout53 Hosted Zones And After that you can add DNS server in that
+
 Create a new file named .env in the root directory of the project and provide this key and Value.
 PORT=<port_number>
 MONGODB_URI="<mongodb_connection_string>"
@@ -53,6 +55,8 @@ API Endpoints (Example URLs):
 •	POST Create new record: https://awsroute53.onrender.com/api/dns-records
 •	DELETE Deleting DNS Record: https://awsroute53.onrender.com/api/dns-records/{id}
 •	POST Bulk Update: https://awsroute53.onrender.com/api/upload
+
+
 
 Bugs:
 1-While selecting Type of the Dns Server Record if wrong value entered I did not provided  any message to select the correct record for the selected DNS record.
