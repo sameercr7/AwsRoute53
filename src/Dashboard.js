@@ -44,7 +44,7 @@ const Dashboard = () => {
   const [dnsRecords, setDnsRecords] = useState([]);
   const [hostedZones, setHostedZones] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [chartData, setChartData] = useState(null); // State for chart data
+  const [chartData, setChartData] = useState(null); 
   const [selectedZone, setSelectedZone] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
   
@@ -64,7 +64,7 @@ const Dashboard = () => {
        
            // Fetch hosted zones
            const hostedZonesResponse = await axios.get(
-            "http://localhost:3001/api/hosted-domains",
+            "https://awsroute53.onrender.com/api/hosted-domains",
             {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -75,7 +75,7 @@ const Dashboard = () => {
           console.log(hostedZonesResponse);
            // Fetch DNS records
         const dnsResponse = await axios.get(
-          "http://localhost:3001/api/dns-records",
+          "https://awsroute53.onrender.com/api/dns-records",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -85,7 +85,7 @@ const Dashboard = () => {
         setDnsRecords(dnsResponse.data);
 
         const hostedZoneChartResponse = await axios.get(
-          "http://localhost:3001/api/hosted-zones-with-records",
+          "https://awsroute53.onrender.com/api/hosted-zones-with-records",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -135,7 +135,7 @@ const Dashboard = () => {
     if (currentRecord._id) {
       // Update existing record
       const response = await axios.put(
-        `http://localhost:3001/api/dns-records/${currentRecord._id}`,
+        `https://awsroute53.onrender.com/api/dns-records/${currentRecord._id}`,
         currentRecord,
         {
           headers: {
@@ -151,7 +151,7 @@ const Dashboard = () => {
     } else {
       // Create new record
       const response = await axios.post(
-        "http://localhost:3001/api/dns-records",
+        "https://awsroute53.onrender.com/api/dns-records",
         currentRecord,
         {
           headers: {
@@ -168,7 +168,7 @@ const Dashboard = () => {
   const handleDeleteRecord = async (id) => {
     console.log("this id is to be deleted", id);
     const accessToken = await getAccessTokenSilently();
-    await axios.delete(`http://localhost:3001/api/dns-records/${id}`, {
+    await axios.delete(`https://awsroute53.onrender.com/api/dns-records/${id}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -197,7 +197,7 @@ const Dashboard = () => {
 
     try {
       const accessToken = await getAccessTokenSilently();
-      await axios.post("http://localhost:3001/api/upload", formData, {
+      await axios.post("https://awsroute53.onrender.com/api/upload", formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data",
@@ -225,7 +225,7 @@ const Dashboard = () => {
     try {
       // Make API call to create the hosted zone
       const response = await axios.post(
-        "http://localhost:3001/api/create-hosted-zone",
+        "https://awsroute53.onrender.com/api/create-hosted-zone",
         {
           domainName: newHostedZone,
         }
@@ -256,7 +256,7 @@ const Dashboard = () => {
     try {
       const accessToken = await getAccessTokenSilently();
       await axios.post(
-        "http://localhost:3001/api/update-hosted-zone-id",
+        "https://awsroute53.onrender.com/api/update-hosted-zone-id",
         { zoneId },
         {
           headers: {
