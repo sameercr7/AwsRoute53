@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import AwsChart from "./AwsChart";
 import {
   Button,
   Table,
@@ -21,7 +20,8 @@ import {
 } from "@mui/material";
 
 import { useAuth0 } from "@auth0/auth0-react";
-import "./dashboard.css"; 
+import "./dashboard.css"; // Importing the CSS
+import AwsChart from "./AwsChart";
 
 const recordTypes = [
   "SOA",
@@ -44,12 +44,12 @@ const Dashboard = () => {
   const [dnsRecords, setDnsRecords] = useState([]);
   const [hostedZones, setHostedZones] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [chartData, setChartData] = useState(null);
-  const [chartReponseData, setChartResponseData] = useState([]);
+  const [chartData, setChartData] = useState(null); // State for chart data
   const [selectedZone, setSelectedZone] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [isCreatingHostedZone, setIsCreatingHostedZone] = useState(false); 
-  const [newHostedZone, setNewHostedZone] = useState(""); 
+  
+  const [isCreatingHostedZone, setIsCreatingHostedZone] = useState(false); // State to manage the visibility of the hosted zone creation field
+  const [newHostedZone, setNewHostedZone] = useState(""); // State to store the domain name for the new
   const [currentRecord, setCurrentRecord] = useState({
     domain: "",
     type: "",
@@ -62,8 +62,19 @@ const Dashboard = () => {
         const accessToken = await getAccessTokenSilently();
 
         // Fetch DNS records
+           // Fetch hosted zones
+           const hostedZonesResponse = await axios.get(
+            "http://localhost:3001/api/hosted-domains",
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          setHostedZones(hostedZonesResponse.data);
+          console.log(hostedZonesResponse);
         const dnsResponse = await axios.get(
-          "https://awsroute53.onrender.com/api/dns-records",
+          "http://localhost:3001/api/dns-records",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -73,14 +84,14 @@ const Dashboard = () => {
         setDnsRecords(dnsResponse.data);
 
         const hostedZoneChartResponse = await axios.get(
-          "https://awsroute53.onrender.com/api/hosted-zones-with-records",
+          "http://localhost:3001/api/hosted-zones-with-records",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
           }
         );
-        setChartResponseData(hostedZoneChartResponse.data);
+        // setChartResponseData(hostedZoneChartResponse.data);
         // Format data for chart
         const formattedData = Object.keys(hostedZoneChartResponse.data).map(
           (zoneId) => ({
@@ -90,16 +101,7 @@ const Dashboard = () => {
         );
         setChartData(formattedData);
 
-        // Fetch hosted zones
-        const hostedZonesResponse = await axios.get(
-          "https://awsroute53.onrender.com/api/hosted-domains",
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        setHostedZones(hostedZonesResponse.data);
+     
       })();
     }
   }, [isAuthenticated, getAccessTokenSilently]);
@@ -132,7 +134,7 @@ const Dashboard = () => {
     if (currentRecord._id) {
       // Update existing record
       const response = await axios.put(
-        `https://awsroute53.onrender.com/api/dns-records/${currentRecord._id}`,
+        `http://localhost:3001/api/dns-records/${currentRecord._id}`,
         currentRecord,
         {
           headers: {
@@ -148,7 +150,7 @@ const Dashboard = () => {
     } else {
       // Create new record
       const response = await axios.post(
-        "https://awsroute53.onrender.com/api/dns-records",
+        "http://localhost:3001/api/dns-records",
         currentRecord,
         {
           headers: {
@@ -165,14 +167,11 @@ const Dashboard = () => {
   const handleDeleteRecord = async (id) => {
     console.log("this id is to be deleted", id);
     const accessToken = await getAccessTokenSilently();
-    await axios.delete(
-      `https://awsroute53.onrender.com/api/dns-records/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+    await axios.delete(`http://localhost:3001/api/dns-records/${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
     setDnsRecords((prev) => prev.filter((record) => record._id !== id));
     Swal.fire(
       "Record Deleted",
@@ -197,7 +196,7 @@ const Dashboard = () => {
 
     try {
       const accessToken = await getAccessTokenSilently();
-      await axios.post("https://awsroute53.onrender.com/api/upload", formData, {
+      await axios.post("http://localhost:3001/api/upload", formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data",
@@ -220,84 +219,110 @@ const Dashboard = () => {
   const handleNewHostedZoneChange = (e) => {
     setNewHostedZone(e.target.value);
   };
-// Function to handle saving the new hosted zone
-const handleSaveHostedZone = async () => {
-  try {
-    // Make API call to create the hosted zone
-    const response = await axios.post("https://awsroute53.onrender.com/api/create-hosted-zone", {
-      domainName: newHostedZone,
-    });
+  // Function to handle saving the new hosted zone
+  const handleSaveHostedZone = async () => {
+    try {
+      // Make API call to create the hosted zone
+      const response = await axios.post(
+        "http://localhost:3001/api/create-hosted-zone",
+        {
+          domainName: newHostedZone,
+        }
+      );
 
-    // Display success message using SweetAlert
-    Swal.fire({
-      icon: "success",
-      title: "Hosted Zone Created",
-      text: `Hosted zone for ${response.data.hostedZone.Name} has been created successfully.`,
-    });
+      // Display success message using SweetAlert
+      Swal.fire({
+        icon: "success",
+        title: "Hosted Zone Created",
+        text: `Hosted zone for ${response.data.hostedZone.Name} has been created successfully.`,
+      });
 
-    // Clear the input field and close the hosted zone creation field
-    setNewHostedZone("");
-    setIsCreatingHostedZone(false);
-  } catch (error) {
-    // Display error message using SweetAlert
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: "Failed to create hosted zone. Please try again later.",
-    });
-  }
-};
+      // Clear the input field and close the hosted zone creation field
+      setNewHostedZone("");
+      setIsCreatingHostedZone(false);
+    } catch (error) {
+      // Display error message using SweetAlert
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to create hosted zone. Please try again later.",
+      });
+    }
+  };
+  // new PostApi to just update the Env Id
+  const handleZoneSelection = async (zoneId) => {
+    console.log("ye rahi zoneId",zoneId);
+    try {
+      const accessToken = await getAccessTokenSilently();
+      await axios.post(
+        "http://localhost:3001/api/update-hosted-zone-id",
+        { zoneId },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log(
+        "Environment variable updated successfully with zone ID:",
+        zoneId
+      );
+    } catch (error) {
+      console.error("Failed to update environment variable:", error);
+    }
+  };
 
   return (
     <div className="dashboard">
       <Container>
-        <Typography variant="h4" component="h1" className="title">
-          DNS Records Dashboard
-        </Typography>
-
+        {/* Button to toggle hosted zone creation */}
         <Button
-        variant="contained"
-        color="primary"
-        onClick={toggleHostedZoneCreation}
-        className="add-button"
-        style={{ backgroundColor: "green" }} // Set button color to green
-      >
-        Create Hosted Zone
-      </Button>
-
-      {/* Hosted zone creation field */}
-      {isCreatingHostedZone && (
-        <div className="create-hosted-zone-field">
-          <TextField
-            label="Domain Name"
-            value={newHostedZone}
-            onChange={handleNewHostedZoneChange}
-            fullWidth
-            variant="outlined"
-            margin="normal"
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSaveHostedZone}
-          >
-            Save Hosted Zone
-          </Button>
-        </div>
-      )}
+          variant="contained"
+          color="primary"
+          onClick={toggleHostedZoneCreation}
+          className="add-button"
+          style={{ backgroundColor: "green" }} // Set button color to green
+        >
+          Create Hosted Zone
+        </Button>
+<h2>Note :Before Editing/Deleting/Adding DNS Record First select the Available Hosted Zone</h2>
+<h2>Note :For Creation Click On created Hosted Zone Then Repeat the ABove Process For Edit/Delete/Create</h2>
+        {/* Hosted zone creation field */}
+        {isCreatingHostedZone && (
+          <div className="create-hosted-zone-field">
+            <TextField
+              label="Domain Name"
+              value={newHostedZone}
+              onChange={handleNewHostedZoneChange}
+              fullWidth
+              variant="outlined"
+              margin="normal"
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSaveHostedZone}
+            >
+              Save Hosted Zone
+            </Button>
+          </div>
+        )}
 
         <Select
-          value={selectedZone} // Set value to the selected zone
-          onChange={(e) => setSelectedZone(e.target.value)} // Update selected zone
+          value={selectedZone}
+          onChange={(e) => {
+            setSelectedZone(e.target.value);
+            handleZoneSelection(e.target.value);
+          }}
           displayEmpty
           fullWidth
         >
           <MenuItem value="" disabled>
-            Availaible Hosted Zone To Add DNS Records
+            Available Hosted Zones To Add DNS Records
           </MenuItem>
           {hostedZones.map((zone, index) => (
-            <MenuItem key={index} value={zone}>
-              {zone}
+            <MenuItem key={index} value={zone.id}>
+              {zone.name} {/* Render zone.name */}
             </MenuItem>
           ))}
         </Select>
@@ -371,6 +396,7 @@ const handleSaveHostedZone = async () => {
         </TableContainer>
         <h2>Chart Data Domain Vs Records</h2>
         <AwsChart chartData={chartData} />
+        <canvas id="myChart" width="400" height="400"></canvas>
         <Modal open={isModalOpen} onClose={handleCloseModal}>
           <Box className="modal-content">
             <Typography variant="h6" component="h2">
