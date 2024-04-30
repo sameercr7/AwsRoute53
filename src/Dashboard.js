@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 
 import { useAuth0 } from "@auth0/auth0-react";
-import "./dashboard.css"; // Importing the CSS
+import "./dashboard.css"; 
 import AwsChart from "./AwsChart";
 
 const recordTypes = [
@@ -48,8 +48,8 @@ const Dashboard = () => {
   const [selectedZone, setSelectedZone] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
   
-  const [isCreatingHostedZone, setIsCreatingHostedZone] = useState(false); // State to manage the visibility of the hosted zone creation field
-  const [newHostedZone, setNewHostedZone] = useState(""); // State to store the domain name for the new
+  const [isCreatingHostedZone, setIsCreatingHostedZone] = useState(false); 
+  const [newHostedZone, setNewHostedZone] = useState(""); 
   const [currentRecord, setCurrentRecord] = useState({
     domain: "",
     type: "",
@@ -61,7 +61,7 @@ const Dashboard = () => {
       (async () => {
         const accessToken = await getAccessTokenSilently();
 
-        // Fetch DNS records
+       
            // Fetch hosted zones
            const hostedZonesResponse = await axios.get(
             "http://localhost:3001/api/hosted-domains",
@@ -73,6 +73,7 @@ const Dashboard = () => {
           );
           setHostedZones(hostedZonesResponse.data);
           console.log(hostedZonesResponse);
+           // Fetch DNS records
         const dnsResponse = await axios.get(
           "http://localhost:3001/api/dns-records",
           {
@@ -210,16 +211,16 @@ const Dashboard = () => {
       Swal.fire("Upload Failed", error.response.data.message, "error");
     }
   };
-  // Function to handle opening/closing the hosted zone creation field
+  // handle opening/closing the hosted zone creation field
   const toggleHostedZoneCreation = () => {
     setIsCreatingHostedZone(!isCreatingHostedZone);
   };
 
-  // Function to handle input change for the domain name of the new hosted zone
+  // handle input change for the domain name of the new hosted zone
   const handleNewHostedZoneChange = (e) => {
     setNewHostedZone(e.target.value);
   };
-  // Function to handle saving the new hosted zone
+  //handle saving the new hosted zone
   const handleSaveHostedZone = async () => {
     try {
       // Make API call to create the hosted zone
